@@ -22,16 +22,19 @@ do
 	unset VALUE
 	unset CPUSUMM
 	let "DIFF_IDLE=$IDLE-$SUMM_PREV_IDLE"
-	#if [ "$DIFF_IDLE" == "0" ]
-       if test "$DIFF_IDLE" = '0'; then
+	float DIFF_IDLE
+	if [[ $DIFF_IDLE == 0.000000000e+00 ]]; then
 		# Prevents a divide by zero
-		DIFF_IDLE='0.001'
+		DIFF_IDLE=0.001
 	fi
 
 	let "DIFF_TOTAL=$TOTAL-$SUMM_PREV_TOTAL"
-
-	STR="scale=2;100-(100/($DIFF_TOTAL/$DIFF_IDLE))"
+	float DIFF_TOTAL
+	float DIFF_IDLE
+	((FRACT = $DIFF_TOTAL / $DIFF_IDLE ))
+	STR="scale=2;100-(100/($FRACT))"
 	DIFF_USAGE="$( echo $STR | bc )"
+	unset FRACT
 	unset DIFF_TOTAL
 	unset DIFF_IDLE  
   
@@ -57,18 +60,23 @@ do
 			let "TOTAL=$TOTAL+$VALUE"
 		done
 		unset CPU
-	    unset VALUE
+	    	unset VALUE
 		PREV_IDLE=$((PAST_IDLE[$core]))
 		let "DIFF_IDLE=$IDLE-$PREV_IDLE"
-        if test "$DIFF_IDLE" = '0'; then
+		float DIFF_IDLE
+		if [[ $DIFF_IDLE == 0.000000000e+00 ]]; then
 			# Prevents a divide by zero
-		       DIFF_IDLE='0.001'
+		       DIFF_IDLE=0.001
 		fi
 		PREV_TOTAL=$((PAST_TOTAL[$core]))
 		PREV_TOTAL="$( echo $PREV_TOTAL | bc )"
+		float DIFF_TOTAL
+		float DIFF_IDLE
 		((DIFF_TOTAL = $TOTAL - $PREV_TOTAL))
-		STR="scale=2;100-(100/($DIFF_TOTAL/$DIFF_IDLE))"
+		((FRACT = $DIFF_TOTAL / $DIFF_IDLE ))
+		STR="scale=2;100-(100/($FRACT))"
 		DIFF_USAGE="$( echo $STR | bc )"
+		unset FRACT
 		unset DIFF_TOTAL
 		unset DIFF_IDLE
   
