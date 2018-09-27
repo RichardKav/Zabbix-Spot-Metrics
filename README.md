@@ -1,6 +1,14 @@
 # Zabbix Spot Metrics
 
-These are scripts used for Zabbix that create metrics for CPU, Disk, Network and Cache. They are pushed to Zabbix through Zabbix sender.
+These are scripts used for Zabbix that create metrics for CPU, Disk, Network and Cache. The create a file with metrics recorded in the format:
+
+```
+<hostname> <key> <value>
+```
+
+They can then be pushed to Zabbix through Zabbix sender, using the command:
+
+zabbix_sender -z <server> -p <port_default_is_10051> -r -i spot-metrics.log
 
 They exist in two versions one for Zsh shells and one for Bash based shells. They are aimed at giving measurements at intervals of around 1 second.
 
